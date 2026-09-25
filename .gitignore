@@ -1,0 +1,31 @@
+# Configuracoes locais e credenciais
+.env
+.env.*
+!.env.example
+paginas/09.conexao.php
+paginas/00.email.php
+
+# Dados gerados pela aplicacao
+paginas/tmp_sessions/
+paginas/storage/cache/
+paginas/uploads/
+*.log
+error_log
+
+# Bancos, exportacoes e pacotes de publicacao
+*.sql
+*.zip
+*.bak
+*.bak-*
+
+# Backups locais e historicos
+_backup*/
+backup*/
+backups/
+
+# Arquivos do sistema e editor
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+

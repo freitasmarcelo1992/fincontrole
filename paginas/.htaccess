@@ -1,0 +1,19 @@
+Options -Indexes
+AddDefaultCharset UTF-8
+
+<FilesMatch "\.(sql|md|drawio)$">
+  Require all denied
+</FilesMatch>
+
+<FilesMatch "^(09\.conexao\.config|00\.email\.config|00\.crypto\.config|00\.asaas\.config).*$">
+  Require all denied
+</FilesMatch>
+
+<FilesMatch "^(0\.teste\.php|error_log)$">
+  Require all denied
+</FilesMatch>
+
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteRule ^(backup|_restore_points|tmp_sessions|Mobile\ Teste|Nova\ pasta)(/|$) - [F,L]
+</IfModule>

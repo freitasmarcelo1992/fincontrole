@@ -1,0 +1,80 @@
+.treino-actions { display: grid; gap: 10px; }
+.hero .medidas-open { background: var(--panel-2); border: 1px solid var(--line); }
+.medidas-dialog, .medidas-help-dialog { width: min(560px, calc(100% - 20px)); max-height: calc(100dvh - 20px); padding: 14px; border: 1px solid var(--line); border-radius: 16px; color: var(--text); background: var(--panel); overflow-y: auto; overscroll-behavior: contain; }
+.medidas-dialog::backdrop, .medidas-help-dialog::backdrop { background: rgba(2,10,17,.8); }
+.medidas-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.medidas-head h2 { font-size: 20px; margin: 0; }
+.medidas-head button { flex: 0 0 40px; height: 40px; border: 0; border-radius: 8px; background: var(--panel-2); color: white; cursor: pointer; }
+.medidas-tabs { display: grid; grid-template-columns: 1fr 1fr; gap: 4px; margin: 8px 0 10px; }
+.medidas-tabs button, .medidas-more { border: 1px solid var(--line); padding: 9px; background: transparent; color: var(--text); border-radius: 8px; font: inherit; font-size: 14px; cursor: pointer; }
+.medidas-tabs [aria-selected="true"] { background: #087f9e; border-color: #12aeea; }
+.medidas-dialog [hidden] { display: none !important; }
+.medidas-dialog fieldset { border: 0; padding: 0; margin: 8px 0 0; min-width: 0; }
+.medidas-dialog legend { font-weight: bold; padding: 0; margin-bottom: 4px; font-size: 14px; }
+.medidas-dialog p, .medidas-dialog small { color: var(--muted); line-height: 1.45; font-size: 13px; }
+.medidas-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+.medidas-dialog fieldset > label + .medidas-grid { margin-top: 8px; }
+.medidas-wide { grid-column: 1 / -1; }
+.medidas-dialog label { display: flex; flex-direction: column; gap: 4px; font-size: 13px; line-height: 1.3; min-width: 0; }
+.medidas-dialog input { box-sizing: border-box; min-width: 0; width: 100%; height: 42px; background: #061a2a; color: var(--text); border: 1px solid var(--line); border-radius: 8px; font: inherit; font-size: 16px; padding: 8px; color-scheme: dark; }
+.medidas-dialog input:focus-visible, .medidas-dialog button:focus-visible { outline: 2px solid #12aeea; outline-offset: 2px; }
+.medidas-dialog input[aria-invalid="true"] { border-color: #fb7185; }
+.medidas-dialog details { padding: 0; margin: 6px 0 16px; border: 0; }
+.medidas-dialog summary { font-size: 13px; padding: 8px 0; }
+.medidas-dialog .primary-btn { width: 100%; min-height: 44px; }
+.medidas-dialog .medidas-note { font-size: 12px; margin: 8px 0; line-height: 1.3; }
+.medidas-help { display: inline-grid; place-items: center; vertical-align: middle; width: 32px; height: 32px; padding: 0; border: 0; background: transparent; color: #7dd3fc; font-size: 16px; cursor: pointer; }
+.medidas-help-dialog h3 { font-size: 15px; margin: 16px 0 8px; }
+.medidas-help-dialog p { font-size: 14px; color: var(--muted); line-height: 1.5; }
+.medidas-help-dialog [hidden] { display: none !important; }
+@media (max-height: 700px) {
+    .medidas-dialog { padding: 10px 12px; }
+    .medidas-head button { flex-basis: 34px; height: 34px; }
+    .medidas-dialog input { height: 38px; padding: 6px 8px; }
+    .medidas-dialog label { font-size: 12px; gap: 3px; }
+    .medidas-tabs { margin: 6px 0 8px; }
+    .medidas-tabs button { padding: 7px; }
+    .medidas-dialog fieldset { margin-top: 5px; }
+    .medidas-grid { gap: 6px; }
+    .medidas-dialog .medidas-status { margin: 6px 0; }
+}
+@media (max-height: 600px) {
+    .medidas-dialog input { height: 36px; }
+    .medidas-dialog label { gap: 2px; }
+    .medidas-dialog fieldset { margin-top: 3px; }
+    .medidas-help { height: 28px; }
+    .medidas-dialog .medidas-note { margin: 6px 0; }
+    .medidas-dialog .primary-btn { padding: 10px 12px; min-height: 40px; }
+}
+.medidas-dialog button:disabled { opacity: .6; cursor: wait; }
+.medidas-dialog .medidas-status { margin: 12px 0; color: #9fe6c0; }
+.medidas-dialog .medidas-status:empty { display: none; }
+.medidas-dialog .medidas-status.is-error { color: #fda4af; }
+.medidas-entry { border-bottom: 1px solid var(--line); padding: 16px 0; }
+.medidas-entry header { display: flex; align-items: center; justify-content: space-between; }
+.medidas-entry button { border: 0; background: transparent; color: #7dd3fc; width: 40px; height: 40px; cursor: pointer; }
+.medidas-entry dl { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 8px; font-size: 13px; }
+.medidas-entry dt { color: var(--muted); }
+.medidas-entry dd { margin: 0; text-align: right; }
+.medidas-more { width: 100%; margin-top: 16px; }
+.treinos-app .main { display: flex; flex-direction: column; min-height: 100svh; min-width: 0; }
+.medidas-evolution { display: flex; flex-direction: column; flex: 1; min-height: 280px; gap: 8px; }
+.evolution-head { display: flex; justify-content: space-between; align-items: center; gap: 12px; }
+.evolution-head h2 { font-size: 18px; margin: 0; }
+.evolution-head select { color-scheme: dark; color: var(--text); background: var(--panel); border: 1px solid var(--line); border-radius: 6px; padding: 7px; font: inherit; font-size: 12px; }
+.evolution-tabs { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 4px; }
+.evolution-tabs button { min-height: 36px; border: 1px solid var(--line); border-radius: 6px; background: transparent; color: var(--muted); font: inherit; font-size: 12px; font-weight: 700; cursor: pointer; }
+.evolution-tabs [aria-selected="true"] { background: #087f9e; border-color: #12aeea; color: #fff; }
+.medidas-evolution :focus-visible { outline: 2px solid #12aeea; outline-offset: 2px; }
+#evolution-panel { display: flex; flex-direction: column; flex: 1; min-height: 0; }
+.evolution-summary { min-height: 18px; margin: 0 0 4px; font-size: 12px; color: var(--muted); line-height: 1.4; }
+.evolution-chart { position: relative; flex: 1; min-height: 150px; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+.evolution-chart canvas { position: absolute; inset: 0; width: 100% !important; height: 100% !important; }
+.evolution-chart [hidden] { display: none !important; }
+.evolution-chart p { margin: 0; color: var(--muted); font-size: 13px; text-align: center; max-width: 290px; line-height: 1.4; }
+.evolution-retry { background: var(--panel); border: 1px solid var(--line); color: var(--text); padding: 8px 12px; border-radius: 6px; margin-top: 10px; cursor: pointer; }
+@media (max-width: 760px) {
+    .treinos-app .main > .hero, .treinos-app .main > .stats { margin-bottom: 0; flex-shrink: 0; }
+    .medidas-evolution { min-height: 230px; }
+    .evolution-chart { min-height: 120px; }
+}
