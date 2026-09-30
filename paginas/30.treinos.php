@@ -4,6 +4,16 @@ require_once "09.conexao.php";
 require_once "00.version.php";
 require_once "00.treinos.php";
 
+$treinos_tela = $treinos_tela ?? 'inicio';
+if (!in_array($treinos_tela, ['inicio', 'escolher', 'progresso'], true)) {
+    $treinos_tela = 'inicio';
+}
+$treinos_rota_atual = [
+    'inicio' => '30.treinos.php',
+    'escolher' => '35.treinos_escolher.php',
+    'progresso' => '36.treinos_progresso.php',
+][$treinos_tela];
+
 if (!isset($_SESSION["id_usuario"])) {
     header("Location: 02.login.php");
     exit();
@@ -17,7 +27,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['acao_dashboard'] ?? '') ==
     if (uploadAvatarDashboard($id_usuario)) {
         fincontrol_cache_invalidar_usuario($id_usuario);
     }
-    header('Location: 30.treinos.php', true, 303);
+    header('Location: ' . $treinos_rota_atual, true, 303);
     exit;
 }
 $avatarDashboardSrc = avatarDashboardSrc($id_usuario);
@@ -43,13 +53,13 @@ $rotinas_padrao += [
 $rotinas_full_body = fincontrol_treinos_rotina_full_body();
 $tipos_treino = [
     'padrao' => [
-        'nome' => 'Treino padrao',
-        'resumo' => 'Cronograma atual validado por dia da semana.',
+        'nome' => 'Treino padrão',
+        'resumo' => 'Cronograma organizado por dia da semana.',
         'rotinas' => $rotinas_padrao,
     ],
     'fullbody' => [
         'nome' => 'Treino Full body',
-        'resumo' => 'ABC com demanda alternada e exercicios do treino padrao.',
+        'resumo' => 'ABC com demanda alternada e exercícios do treino padrão.',
         'rotinas' => $rotinas_full_body,
     ],
 ];
@@ -88,7 +98,7 @@ function treino_imagem_data_uri(array $exercicio): string
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <title>FinControle | Treinos</title>
+    <title>FinControle | <?= $treinos_tela === 'escolher' ? 'Escolher treino' : ($treinos_tela === 'progresso' ? 'Progresso' : 'Meus treinos'); ?></title>
     <link rel="manifest" href="manifest.json">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <style>
@@ -128,6 +138,29 @@ function treino_imagem_data_uri(array $exercicio): string
         .hero { padding: 22px; display: grid; grid-template-columns: 1fr auto; gap: 16px; align-items: center; margin-bottom: 16px; }
         .hero h2 { margin: 0; font-size: 26px; }
         .hero p { margin: 8px 0 0; color: var(--muted); max-width: 620px; }
+        .journey-intro { margin-bottom: 16px; }
+        .journey-intro h2 { margin: 0; font-size: 27px; }
+        .journey-intro p { margin: 7px 0 0; color: var(--muted); }
+        .journey-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
+        .journey-card {
+            min-height: 220px; padding: 22px; display: flex; flex-direction: column; align-items: flex-start;
+            background: linear-gradient(145deg, rgba(20, 58, 85, .96), rgba(8, 31, 51, .96));
+            border: 1px solid var(--line); border-radius: 18px; box-shadow: 0 18px 42px rgba(0,0,0,.22);
+            transition: transform .18s ease, border-color .18s ease;
+        }
+        .journey-card:hover { transform: translateY(-2px); border-color: rgba(18, 200, 239, .72); }
+        .journey-icon {
+            width: 52px; height: 52px; display: grid; place-items: center; border-radius: 14px;
+            background: rgba(18, 174, 234, .18); color: #35c9f5; font-size: 23px;
+        }
+        .journey-card h3 { margin: 18px 0 7px; font-size: 20px; }
+        .journey-card p { margin: 0; color: var(--muted); line-height: 1.45; }
+        .journey-action { margin-top: auto; padding-top: 20px; color: #4fd5fa; font-weight: 900; }
+        .journey-action i { margin-left: 6px; }
+        .subpage-heading { display: flex; justify-content: space-between; align-items: flex-end; gap: 16px; margin-bottom: 16px; }
+        .subpage-heading h2 { margin: 8px 0 0; font-size: 27px; }
+        .subpage-heading p { margin: 7px 0 0; color: var(--muted); }
+        .back-link { display: inline-flex; align-items: center; gap: 7px; color: #58d7fa; font-weight: 800; font-size: 14px; }
         .primary-btn {
             border: 0; border-radius: 14px; padding: 14px 18px; min-height: 48px; color: #fff; font-weight: 800;
             background: linear-gradient(135deg, #12c8ef, #148de2); cursor: pointer;
@@ -231,6 +264,17 @@ function treino_imagem_data_uri(array $exercicio): string
             .hero { grid-template-columns: 1fr; padding: 16px; }
             .hero h2 { font-size: 22px; }
             .hero p { font-size: 13px; line-height: 1.35; }
+            .journey-intro { margin: 2px 2px 0; }
+            .journey-intro h2, .subpage-heading h2 { font-size: 22px; }
+            .journey-intro p, .subpage-heading p { font-size: 13px; line-height: 1.4; }
+            .journey-grid { grid-template-columns: 1fr; gap: 10px; }
+            .journey-card { min-height: 0; padding: 16px; display: grid; grid-template-columns: 46px 1fr auto; column-gap: 13px; align-items: center; }
+            .journey-icon { width: 46px; height: 46px; grid-row: 1 / 3; font-size: 20px; }
+            .journey-card h3 { margin: 0 0 4px; font-size: 17px; }
+            .journey-card p { font-size: 12px; line-height: 1.35; }
+            .journey-action { grid-column: 3; grid-row: 1 / 3; margin: 0; padding: 0; font-size: 0; }
+            .journey-action i { margin: 0; font-size: 15px; }
+            .subpage-heading { align-items: flex-start; margin: 0 2px 4px; }
             .primary-btn { width: 100%; }
             .stats { grid-template-columns: repeat(3, 1fr); gap: 8px; }
             .card { padding: 12px 10px; min-height: 86px; }
@@ -324,7 +368,7 @@ function treino_imagem_data_uri(array $exercicio): string
     <link rel="stylesheet" href="assets/medidas.css?v=5">
     <link rel="stylesheet" href="assets/header-perfil.css?v=1">
 </head>
-<body class="treinos-app">
+<body class="treinos-app" data-treinos-view="<?= h($treinos_tela); ?>">
     <aside class="sidebar">
         <div class="brand"><i class="fa fa-wallet"></i> FinControle</div>
         <a href="03.menu.php"><i class="fa fa-house"></i> Dashboard</a>
@@ -339,17 +383,49 @@ function treino_imagem_data_uri(array $exercicio): string
     <main class="main">
         <?php require __DIR__ . '/00.header_perfil_view.php'; ?>
 
-        <section class="hero">
-            <div>
-                <h2>Meus treinos</h2>
-                <p>Sua rotina de treino e evolução.</p>
-            </div>
-            <div class="treino-actions">
-                <button class="primary-btn" type="button" data-open-workout><i class="fa fa-play"></i> Iniciar treino</button>
-                <button class="primary-btn medidas-open" type="button" data-open-medidas><i class="fa-solid fa-ruler"></i> Medidas</button>
-            </div>
+        <?php if ($treinos_tela === 'inicio'): ?>
+        <section class="journey-intro">
+            <h2>Meus treinos</h2>
+            <p>O que você quer fazer agora?</p>
         </section>
-
+        <section class="journey-grid" aria-label="Opções de treino">
+            <a class="journey-card" href="35.treinos_escolher.php">
+                <span class="journey-icon"><i class="fa-solid fa-dumbbell"></i></span>
+                <h3>Escolher treino</h3>
+                <p>Selecione sua rotina, confira os exercícios e comece o treino.</p>
+                <span class="journey-action">Começar <i class="fa-solid fa-arrow-right"></i></span>
+            </a>
+            <a class="journey-card" href="36.treinos_progresso.php">
+                <span class="journey-icon"><i class="fa-solid fa-chart-line"></i></span>
+                <h3>Visualizar progresso</h3>
+                <p>Acompanhe frequência, sequência e evolução corporal.</p>
+                <span class="journey-action">Acompanhar <i class="fa-solid fa-arrow-right"></i></span>
+            </a>
+            <a class="journey-card" href="34.medidas_historico.php">
+                <span class="journey-icon"><i class="fa-solid fa-ruler-combined"></i></span>
+                <h3>Medidas</h3>
+                <p>Registre, consulte, edite ou exclua suas medições.</p>
+                <span class="journey-action">Gerenciar <i class="fa-solid fa-arrow-right"></i></span>
+            </a>
+        </section>
+        <?php elseif ($treinos_tela === 'escolher'): ?>
+        <section class="subpage-heading">
+            <div>
+                <a class="back-link" href="30.treinos.php"><i class="fa-solid fa-arrow-left"></i> Meus treinos</a>
+                <h2>Escolher treino</h2>
+                <p>Selecione uma rotina e o dia para começar.</p>
+            </div>
+            <button class="primary-btn" type="button" data-open-workout><i class="fa-solid fa-play"></i> Escolher treino</button>
+        </section>
+        <?php elseif ($treinos_tela === 'progresso'): ?>
+        <section class="subpage-heading">
+            <div>
+                <a class="back-link" href="30.treinos.php"><i class="fa-solid fa-arrow-left"></i> Meus treinos</a>
+                <h2>Meu progresso</h2>
+                <p>Frequência de treinos e evolução das suas medidas.</p>
+            </div>
+            <a class="primary-btn" href="34.medidas_historico.php"><i class="fa-solid fa-ruler-combined"></i> Medidas</a>
+        </section>
         <section class="stats" aria-label="Indicadores de treino">
             <div class="card"><span>Treinos no mês</span><strong data-treinos-mes>0</strong></div>
             <div class="card"><span>Sequência</span><strong data-sequencia>0</strong></div>
@@ -385,15 +461,17 @@ function treino_imagem_data_uri(array $exercicio): string
                 </div>
             </div>
         </section>
+        <?php endif; ?>
     </main>
 
+    <?php if ($treinos_tela === 'escolher'): ?>
     <div class="workout-backdrop" data-workout-modal hidden>
         <section class="workout-panel workout-step workout-picker" data-workout-step="picker" role="dialog" aria-modal="true" aria-label="Escolher dia do treino">
             <div class="workout-head">
-                <h2>Meus treinos</h2>
+                <h2>Escolher treino</h2>
                 <button type="button" data-close-workout aria-label="Fechar">×</button>
             </div>
-            <p>Escolha uma rotina e veja os exercicios.</p>
+            <p>Escolha uma rotina e veja os exercícios.</p>
 
             <div class="workout-types" aria-label="Meus treinos">
                 <?php foreach ($tipos_treino as $tipo_codigo => $tipo_treino): ?>
@@ -495,6 +573,7 @@ function treino_imagem_data_uri(array $exercicio): string
             <?php endforeach; ?>
         </section>
     </div>
+    <?php endif; ?>
 
     <nav class="bottom-nav" aria-label="Menu inferior">
         <a href="03.menu.php"><i class="fa fa-house"></i><span>Início</span></a>
@@ -694,9 +773,12 @@ function treino_imagem_data_uri(array $exercicio): string
             const treinosMes = historico.filter((item) => item.data.slice(0, 7) === `${anoAtual}-${mesAtual}`);
             const diasUnicos = new Set(treinosMes.map((item) => item.data)).size;
             const ultimo = historico.length ? historico[historico.length - 1] : null;
-            document.querySelector('[data-treinos-mes]').textContent = treinosMes.length;
-            document.querySelector('[data-sequencia]').textContent = diasUnicos;
-            document.querySelector('[data-ultimo]').textContent = ultimo ? ultimo.dia.toUpperCase() : '-';
+            const treinosMesEl = document.querySelector('[data-treinos-mes]');
+            const sequenciaEl = document.querySelector('[data-sequencia]');
+            const ultimoEl = document.querySelector('[data-ultimo]');
+            if (treinosMesEl) treinosMesEl.textContent = treinosMes.length;
+            if (sequenciaEl) sequenciaEl.textContent = diasUnicos;
+            if (ultimoEl) ultimoEl.textContent = ultimo ? ultimo.dia.toUpperCase() : '-';
             document.querySelectorAll('[data-hist-ultimo]').forEach((el) => { el.textContent = ultimo ? ultimo.dia.toUpperCase() : '-'; });
             document.querySelectorAll('[data-hist-mes]').forEach((el) => { el.textContent = `${treinosMes.length} treino(s)`; });
             document.querySelectorAll('[data-hist-sequencia]').forEach((el) => { el.textContent = `${diasUnicos} dia(s)`; });
@@ -716,7 +798,7 @@ function treino_imagem_data_uri(array $exercicio): string
                 await salvarHistoricoServidor(registro, painel);
                 limparChecksDoPainel(painel);
                 botao.disabled = false;
-                voltarParaPrincipalTreinos();
+                window.location.href = '30.treinos.php?treino_concluido=1';
             });
         });
         document.querySelectorAll('[data-check-exercicio]').forEach((botao) => {
@@ -735,11 +817,12 @@ function treino_imagem_data_uri(array $exercicio): string
         atualizaIndicadores();
         atualizarChecksExercicios();
         carregarHistoricoServidor();
+        if (document.body.dataset.treinosView === 'escolher') openWorkout();
     })();
     </script>
-    <?php require __DIR__ . '/32.medidas_popup.php'; ?>
+    <?php if ($treinos_tela === 'progresso'): ?>
     <script src="assets/chart.umd.min.js" defer></script>
     <script src="assets/medidas-evolucao.js?v=2" defer></script>
-    <script src="assets/medidas.js?v=4" defer></script>
+    <?php endif; ?>
 </body>
 </html>

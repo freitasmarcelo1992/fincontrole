@@ -1,4 +1,4 @@
-const CACHE_NAME = "fincontrole-pwa-v48-historico-medidas-20260929";
+const CACHE_NAME = "fincontrole-pwa-v49-jornadas-treinos-20260929";
 const APP_SHELL = [
   "/paginas/manifest.json",
   "/paginas/assets/img/icon-192.png",
