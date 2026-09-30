@@ -79,6 +79,7 @@
             edit.setAttribute('aria-label', edit.title);
             edit.innerHTML = '<i class="fa-solid fa-pen" aria-hidden="true"></i>';
             edit.addEventListener('click', () => {
+                form.elements.data_original.value = record.data_medicao;
                 form.elements.data_medicao.value = record.data_medicao;
                 Object.keys(fields).forEach(key => {
                     form.elements[key].value = record[key] === null ? '' : String(record[key]).replace('.', ',');
@@ -119,6 +120,7 @@
         } finally { loading = false; more.disabled = false; }
     };
     opener.addEventListener('click', () => {
+        form.elements.data_original.value = '';
         previousOverflow = document.body.style.overflow;
         document.body.style.overflow = 'hidden';
         dialog.showModal();
@@ -147,7 +149,10 @@
     form.addEventListener('submit', async event => {
         event.preventDefault();
         if (save.disabled || loading) return;
-        const payload = {data_medicao: form.elements.data_medicao.value};
+        const payload = {
+            data_medicao: form.elements.data_medicao.value,
+            data_original: form.elements.data_original.value || null
+        };
         let count = 0;
         for (const [key, [label, , max]] of Object.entries(fields)) {
             const input = form.elements[key];

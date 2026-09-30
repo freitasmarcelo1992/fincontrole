@@ -61,6 +61,8 @@
 .medidas-evolution { display: flex; flex-direction: column; flex: 1; min-height: 280px; gap: 8px; }
 .evolution-head { display: flex; justify-content: space-between; align-items: center; gap: 12px; }
 .evolution-head h2 { font-size: 18px; margin: 0; }
+.evolution-controls { display: flex; align-items: center; gap: 6px; }
+.evolution-history-link { display: inline-flex; align-items: center; gap: 5px; min-height: 32px; padding: 6px 8px; border: 1px solid var(--line); border-radius: 6px; color: #7dd3fc; font-size: 11px; font-weight: 800; }
 .evolution-head select { color-scheme: dark; color: var(--text); background: var(--panel); border: 1px solid var(--line); border-radius: 6px; padding: 7px; font: inherit; font-size: 12px; }
 .evolution-tabs { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 4px; }
 .evolution-tabs button { min-height: 36px; border: 1px solid var(--line); border-radius: 6px; background: transparent; color: var(--muted); font: inherit; font-size: 12px; font-weight: 700; cursor: pointer; }
@@ -78,6 +80,10 @@
 .evolution-retry { background: var(--panel); border: 1px solid var(--line); color: var(--text); padding: 8px 12px; border-radius: 6px; margin-top: 10px; cursor: pointer; }
 @media (max-width: 760px) {
     .treinos-app .main > .hero, .treinos-app .main > .stats { margin-bottom: 0; flex-shrink: 0; }
+    .evolution-head { align-items: flex-start; }
+    .evolution-controls { align-items: stretch; }
+    .evolution-history-link { width: 34px; justify-content: center; padding: 6px; font-size: 0; }
+    .evolution-history-link i { font-size: 13px; }
     .medidas-evolution { min-height: 230px; }
     .evolution-chart { min-height: 120px; }
 }

@@ -321,7 +321,7 @@ function treino_imagem_data_uri(array $exercicio): string
         .workout-panel > p { margin: 0 0 12px; color: var(--muted); font-weight: 700; }
         .workout-day-panel[hidden] { display: none; }
     </style>
-    <link rel="stylesheet" href="assets/medidas.css?v=4">
+    <link rel="stylesheet" href="assets/medidas.css?v=5">
     <link rel="stylesheet" href="assets/header-perfil.css?v=1">
 </head>
 <body class="treinos-app">
@@ -358,11 +358,14 @@ function treino_imagem_data_uri(array $exercicio): string
         <section class="medidas-evolution" aria-labelledby="evolution-title" data-medidas-evolution>
             <header class="evolution-head">
                 <h2 id="evolution-title">Minha evolução</h2>
-                <select aria-label="Período da evolução" data-evolution-period>
-                    <option value="30">30 dias</option>
-                    <option value="90" selected>90 dias</option>
-                    <option value="365">1 ano</option>
-                </select>
+                <div class="evolution-controls">
+                    <a class="evolution-history-link" href="34.medidas_historico.php"><i class="fa-solid fa-list"></i> Ver todas</a>
+                    <select aria-label="Período da evolução" data-evolution-period>
+                        <option value="30">30 dias</option>
+                        <option value="90" selected>90 dias</option>
+                        <option value="365">1 ano</option>
+                    </select>
+                </div>
             </header>
             <div class="evolution-tabs" role="tablist" aria-label="Medida do gráfico">
                 <button type="button" role="tab" id="evolution-peso" aria-controls="evolution-panel" aria-selected="true" data-evolution-metric="peso">Peso</button>
@@ -737,6 +740,6 @@ function treino_imagem_data_uri(array $exercicio): string
     <?php require __DIR__ . '/32.medidas_popup.php'; ?>
     <script src="assets/chart.umd.min.js" defer></script>
     <script src="assets/medidas-evolucao.js?v=2" defer></script>
-    <script src="assets/medidas.js?v=3" defer></script>
+    <script src="assets/medidas.js?v=4" defer></script>
 </body>
 </html>

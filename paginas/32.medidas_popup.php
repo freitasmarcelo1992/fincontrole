@@ -14,6 +14,7 @@ $medidas_hoje = (new DateTimeImmutable('now', new DateTimeZone('America/Sao_Paul
     <p class="medidas-status" role="status" aria-live="polite" data-medidas-status></p>
     <section id="medidas-registro" role="tabpanel" aria-labelledby="medidas-tab-registro">
         <form data-medidas-form>
+            <input name="data_original" type="hidden" value="">
             <div class="medidas-grid">
                 <label>Data<input name="data_medicao" type="date" required max="<?= $medidas_hoje; ?>" value="<?= $medidas_hoje; ?>"></label>
                 <label>Peso (kg)<input name="peso" inputmode="decimal" type="text" placeholder="Ex.: 75,5"></label>
