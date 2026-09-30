@@ -81,6 +81,7 @@
             return `<article class="exercise-item${selected ? ' selected' : ''}" data-exercise-id="${item.id}">
                 <div class="exercise-main">
                     <button class="exercise-select" type="button" data-toggle-exercise="${item.id}" aria-pressed="${selected}" aria-label="${selected ? 'Remover' : 'Adicionar'} ${escapeHtml(item.nome)}"><i class="fa-solid fa-${selected ? 'check' : 'plus'}"></i></button>
+                    <img class="exercise-thumb" src="${escapeHtml(item.imagem)}" alt="Referência visual: ${escapeHtml(item.nome)}" loading="lazy">
                     <div class="exercise-copy"><strong>${escapeHtml(item.nome)}</strong><small>${escapeHtml(item.musculo)} · ${escapeHtml(item.equipamento)} · ${escapeHtml(suggestedSeries(item))}</small></div>
                     ${item.composto ? '<span title="Exercício composto"><i class="fa-solid fa-layer-group"></i></span>' : ''}
                 </div>
@@ -216,7 +217,7 @@
         const exercises = treino.exercicios.map((exerciseId) => catalog.get(Number(exerciseId))).filter(Boolean);
         state.treinoAtivo = { ...treino, detalhes: exercises };
         $('[data-runner-title]').textContent = treino.nome;
-        $('[data-runner-list]').innerHTML = exercises.map((item) => `<label class="runner-item"><input type="checkbox" value="${item.id}"><span><strong>${escapeHtml(item.nome)}</strong><small>${escapeHtml(suggestedSeries(item, treino.objetivo))} · ${escapeHtml(item.musculo)}</small></span></label>`).join('');
+        $('[data-runner-list]').innerHTML = exercises.map((item) => `<label class="runner-item"><input type="checkbox" value="${item.id}"><img src="${escapeHtml(item.imagem)}" alt="" loading="lazy"><span><strong>${escapeHtml(item.nome)}</strong><small>${escapeHtml(suggestedSeries(item, treino.objetivo))} · ${escapeHtml(item.musculo)}</small></span></label>`).join('');
         $('[data-runner]').hidden = false;
         document.body.classList.add('no-scroll');
     };

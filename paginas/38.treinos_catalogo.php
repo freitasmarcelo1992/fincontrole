@@ -117,6 +117,7 @@ function treinos_catalogo_listar(mysqli $conexao): array
         FROM treinos_exercicios WHERE ativo = 1 ORDER BY regiao, musculo, composto DESC, nome");
     $itens = [];
     while ($resultado && $linha = $resultado->fetch_assoc()) {
+        $video = (string) $linha['video_url'];
         $itens[] = [
             'id' => (int) $linha['id'],
             'slug' => (string) $linha['slug'],
@@ -127,11 +128,36 @@ function treinos_catalogo_listar(mysqli $conexao): array
             'series' => (string) $linha['series_sugeridas'],
             'tutorial' => (string) $linha['tutorial'],
             'erros' => array_values(array_filter(array_map('trim', explode(';', (string) $linha['erros'])))),
-            'video' => (string) $linha['video_url'],
+            'video' => $video,
+            'imagem' => treinos_catalogo_imagem((string) $linha['musculo'], $video),
             'composto' => (bool) $linha['composto'],
         ];
     }
     return $itens;
+}
+
+function treinos_catalogo_imagem(string $musculo, string $video): string
+{
+    if (preg_match('~youtube\.com/watch\?v=([A-Za-z0-9_-]{8,})~', $video, $correspondencia)) {
+        return 'https://img.youtube.com/vi/' . $correspondencia[1] . '/hqdefault.jpg';
+    }
+
+    $imagens = [
+        'Peito' => 'https://images.unsplash.com/photo-1517836357463-d25dfeac3438?auto=format&fit=crop&w=640&q=80',
+        'Costas' => 'https://images.unsplash.com/photo-1581009146145-b5ef050c2e1e?auto=format&fit=crop&w=640&q=80',
+        'Ombros' => 'https://images.unsplash.com/photo-1534438327276-14e5300c3a48?auto=format&fit=crop&w=640&q=80',
+        'Bíceps' => 'https://images.unsplash.com/photo-1517836357463-d25dfeac3438?auto=format&fit=crop&w=640&q=80',
+        'Tríceps' => 'https://images.unsplash.com/photo-1581009146145-b5ef050c2e1e?auto=format&fit=crop&w=640&q=80',
+        'Quadríceps' => 'https://images.unsplash.com/photo-1666121363683-1f03bf2e0cc1?auto=format&fit=crop&w=640&q=80',
+        'Posterior de coxa' => 'https://images.unsplash.com/photo-1666121363683-1f03bf2e0cc1?auto=format&fit=crop&w=640&q=80',
+        'Glúteos' => 'https://images.unsplash.com/photo-1666121363683-1f03bf2e0cc1?auto=format&fit=crop&w=640&q=80',
+        'Panturrilhas' => 'https://images.unsplash.com/photo-1666121363683-1f03bf2e0cc1?auto=format&fit=crop&w=640&q=80',
+        'Abdômen' => 'https://images.unsplash.com/photo-1599058917212-d750089bc07e?auto=format&fit=crop&w=640&q=80',
+        'Core' => 'https://images.unsplash.com/photo-1599058917212-d750089bc07e?auto=format&fit=crop&w=640&q=80',
+        'Cardio' => 'https://images.unsplash.com/photo-1534438327276-14e5300c3a48?auto=format&fit=crop&w=640&q=80',
+    ];
+
+    return $imagens[$musculo] ?? 'https://images.unsplash.com/photo-1534438327276-14e5300c3a48?auto=format&fit=crop&w=640&q=80';
 }
 
 function treinos_personalizados_listar(mysqli $conexao, int $idUsuario): array

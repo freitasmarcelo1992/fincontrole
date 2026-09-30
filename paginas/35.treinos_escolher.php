@@ -33,7 +33,8 @@ $nome_usuario = $_SESSION['nome_usuario'] ?? 'Usuario';
     <link rel="manifest" href="manifest.json">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link rel="stylesheet" href="assets/header-perfil.css?v=1">
-    <link rel="stylesheet" href="assets/treinos-master.css?v=1">
+    <link rel="stylesheet" href="assets/treinos-master.css?v=2">
+    <link rel="stylesheet" href="assets/treinos-exercise-images.css?v=1">
 </head>
 <body class="treinos-app treinos-master-app">
     <aside class="sidebar">
@@ -113,6 +114,6 @@ $nome_usuario = $_SESSION['nome_usuario'] ?? 'Usuario';
     <nav class="bottom-nav" aria-label="Menu inferior"><a href="03.menu.php"><i class="fa fa-house"></i><span>Início</span></a><a href="04.despesas.php"><i class="fa fa-minus-circle"></i><span>Despesas</span></a><a href="05.receitas.php"><i class="fa fa-plus-circle"></i><span>Receitas</span></a><a href="07.relatorios.php"><i class="fa fa-chart-line"></i><span>Relatórios</span></a><a class="active" href="#" data-fc-open-mobile-menu><i class="fa fa-bars"></i><span>Menu</span></a></nav>
     <div class="mobile-menu-backdrop" data-fc-mobile-menu hidden><div class="mobile-menu-panel"><div class="mobile-menu-head"><h2>Menu completo</h2><button type="button" data-fc-close-mobile-menu aria-label="Fechar">×</button></div><a href="03.menu.php"><i class="fa fa-house"></i> Início</a><a href="04.despesas.php"><i class="fa fa-minus-circle"></i> Despesas</a><a href="05.receitas.php"><i class="fa fa-plus-circle"></i> Receitas</a><a href="07.relatorios.php"><i class="fa fa-chart-line"></i> Relatórios</a><a href="29.minhas_noticias.php"><i class="fa fa-newspaper"></i> Minhas notícias</a><a class="active" href="30.treinos.php"><i class="fa fa-dumbbell"></i> Treinos</a><a href="15.logout.php"><i class="fa fa-sign-out"></i> Sair</a></div></div>
     <div class="app-toast" data-app-toast hidden role="status"></div>
-    <script src="assets/treinos-master.js?v=1" defer></script>
+    <script src="assets/treinos-master.js?v=2" defer></script>
 </body>
 </html>
