@@ -10,7 +10,7 @@ if (!in_array($treinos_tela, ['inicio', 'escolher', 'progresso'], true)) {
 }
 $treinos_rota_atual = [
     'inicio' => '30.treinos.php',
-    'escolher' => '35.treinos_escolher.php',
+    'escolher' => '37.treinos_prontos.php',
     'progresso' => '36.treinos_progresso.php',
 ][$treinos_tela];
 
@@ -63,6 +63,7 @@ $tipos_treino = [
         'rotinas' => $rotinas_full_body,
     ],
 ];
+$plano_inicial = ($_GET['plano'] ?? '') === 'fullbody' ? 'fullbody' : 'padrao';
 $rotinas = $rotinas_padrao;
 $mapa_dia = [1 => 'seg', 2 => 'ter', 3 => 'qua', 4 => 'qui', 5 => 'sex'];
 $dia_padrao = $mapa_dia[(int)date('N')] ?? 'seg';
@@ -411,7 +412,7 @@ function treino_imagem_data_uri(array $exercicio): string
         <?php elseif ($treinos_tela === 'escolher'): ?>
         <section class="subpage-heading">
             <div>
-                <a class="back-link" href="30.treinos.php"><i class="fa-solid fa-arrow-left"></i> Meus treinos</a>
+                <a class="back-link" href="35.treinos_escolher.php"><i class="fa-solid fa-arrow-left"></i> Área de treinos</a>
                 <h2>Escolher treino</h2>
                 <p>Selecione uma rotina e o dia para começar.</p>
             </div>
@@ -475,7 +476,7 @@ function treino_imagem_data_uri(array $exercicio): string
 
             <div class="workout-types" aria-label="Meus treinos">
                 <?php foreach ($tipos_treino as $tipo_codigo => $tipo_treino): ?>
-                    <button class="workout-type <?= $tipo_codigo === 'padrao' ? 'active' : ''; ?>" type="button" data-plan-option="<?= h($tipo_codigo); ?>">
+                    <button class="workout-type <?= $tipo_codigo === $plano_inicial ? 'active' : ''; ?>" type="button" data-plan-option="<?= h($tipo_codigo); ?>">
                         <strong><?= h($tipo_treino['nome']); ?></strong>
                         <small><?= h($tipo_treino['resumo']); ?></small>
                     </button>
@@ -483,9 +484,9 @@ function treino_imagem_data_uri(array $exercicio): string
             </div>
 
             <?php foreach ($tipos_treino as $tipo_codigo => $tipo_treino): ?>
-                <nav class="days workout-days" aria-label="<?= h($tipo_treino['nome']); ?>" data-plan-days="<?= h($tipo_codigo); ?>" <?= $tipo_codigo === 'padrao' ? '' : 'hidden'; ?>>
+                <nav class="days workout-days" aria-label="<?= h($tipo_treino['nome']); ?>" data-plan-days="<?= h($tipo_codigo); ?>" <?= $tipo_codigo === $plano_inicial ? '' : 'hidden'; ?>>
                     <?php foreach ($tipo_treino['rotinas'] as $codigo => $rotina): ?>
-                        <button class="day <?= $tipo_codigo === 'padrao' && $codigo === $dia_atual ? 'active' : ''; ?>" type="button" data-plan-target="<?= h($tipo_codigo); ?>" data-day-target="<?= h($codigo); ?>">
+                        <button class="day <?= $tipo_codigo === $plano_inicial && ($tipo_codigo === 'padrao' ? $codigo === $dia_atual : $codigo === array_key_first($tipo_treino['rotinas'])) ? 'active' : ''; ?>" type="button" data-plan-target="<?= h($tipo_codigo); ?>" data-day-target="<?= h($codigo); ?>">
                             <b><?= h($rotina['dia']); ?></b>
                             <small><?= h($rotina['nome']); ?></small>
                         </button>
@@ -506,7 +507,7 @@ function treino_imagem_data_uri(array $exercicio): string
 
             <?php foreach ($tipos_treino as $tipo_codigo => $tipo_treino): ?>
             <?php foreach ($tipo_treino['rotinas'] as $codigo => $rotina): ?>
-                <div class="workout-day-panel" data-plan-panel="<?= h($tipo_codigo); ?>" data-day-panel="<?= h($codigo); ?>" <?= $tipo_codigo === 'padrao' && $codigo === $dia_atual ? '' : 'hidden'; ?>>
+                <div class="workout-day-panel" data-plan-panel="<?= h($tipo_codigo); ?>" data-day-panel="<?= h($codigo); ?>" <?= $tipo_codigo === $plano_inicial && ($tipo_codigo === 'padrao' ? $codigo === $dia_atual : $codigo === array_key_first($tipo_treino['rotinas'])) ? '' : 'hidden'; ?>>
                     <div class="section-title" id="treino-do-dia-<?= h($codigo); ?>">
                         <div>
                             <h2><?= h($rotina['titulo']); ?></h2>
@@ -622,7 +623,7 @@ function treino_imagem_data_uri(array $exercicio): string
         const workoutModal = document.querySelector('[data-workout-modal]');
         const workoutPicker = document.querySelector('[data-workout-step="picker"]');
         const workoutDetail = document.querySelector('[data-workout-step="detail"]');
-        let selectedPlan = 'padrao';
+        let selectedPlan = <?= json_encode($plano_inicial); ?>;
         const showWorkoutPicker = () => {
             if (workoutPicker) workoutPicker.hidden = false;
             if (workoutDetail) workoutDetail.hidden = true;
