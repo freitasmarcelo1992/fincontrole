@@ -4,7 +4,7 @@
     const endpoint = '38.treinos_catalogo.php';
     const historyEndpoint = '31.treinos_historico.php';
     const csrf = document.querySelector('meta[name="treinos-csrf"]')?.content || '';
-    const state = { catalogo: [], treinos: [], recomendacao: null, modo: 'musculo', selecionados: new Set(), treinoAtivo: null };
+    const state = { catalogo: [], treinos: [], recomendacao: null, modo: 'musculo', alvos: new Set(), selecionados: new Set(), treinoAtivo: null };
     const $ = (selector, root = document) => root.querySelector(selector);
     const $$ = (selector, root = document) => Array.from(root.querySelectorAll(selector));
     const escapeHtml = (value) => String(value ?? '').replace(/[&<>'"]/g, (char) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[char]));
@@ -38,34 +38,44 @@
         return item.series;
     };
 
+    const selectedTargets = () => [...state.alvos];
+    const targetLabel = (targets = selectedTargets()) => {
+        if (targets.length <= 2) return targets.join(' + ');
+        return `${targets.slice(0, 2).join(' + ')} e mais ${targets.length - 2}`;
+    };
+
     const renderTargets = (preferred = '') => {
         const key = state.modo === 'musculo' ? 'musculo' : 'regiao';
         const values = [...new Set(state.catalogo.map((item) => item[key]))].sort((a, b) => a.localeCompare(b, 'pt-BR'));
-        const select = $('[data-builder-target]');
-        if (!select) return;
-        select.innerHTML = values.map((value) => `<option value="${escapeHtml(value)}">${escapeHtml(value)}</option>`).join('');
-        if (preferred && values.includes(preferred)) select.value = preferred;
-        $('[data-target-label]').textContent = state.modo === 'musculo' ? 'Músculo' : 'Região';
+        const root = $('[data-builder-targets]');
+        if (!root) return;
+        const preferredTargets = Array.isArray(preferred) ? preferred : [preferred];
+        if (preferredTargets.filter(Boolean).length) state.alvos = new Set(preferredTargets.filter((value) => values.includes(value)));
+        state.alvos = new Set(selectedTargets().filter((value) => values.includes(value)));
+        if (!state.alvos.size && values.length) state.alvos.add(values[0]);
+        root.innerHTML = values.map((value) => `<button type="button" class="builder-target${state.alvos.has(value) ? ' active' : ''}" data-builder-target="${escapeHtml(value)}" aria-pressed="${state.alvos.has(value)}">${escapeHtml(value)}</button>`).join('');
+        $('[data-target-label]').textContent = state.modo === 'musculo' ? 'Músculos' : 'Regiões';
         updateBuilderHeading();
         renderCatalog();
     };
 
     const updateBuilderHeading = () => {
-        const target = $('[data-builder-target]')?.value || '';
+        const targets = selectedTargets();
         const title = $('[data-builder-title]');
         const copy = $('[data-builder-copy]');
-        if (title) title.textContent = target ? `Treino de ${target}` : 'Escolha um foco';
-        if (copy) copy.textContent = target
-            ? `Selecione manualmente ou gere uma composição para ${target.toLowerCase()}.`
-            : 'Selecione o foco para receber uma composição equilibrada.';
+        const alvo = targetLabel(targets);
+        if (title) title.textContent = alvo ? `Treino de ${alvo}` : 'Escolha um ou mais focos';
+        if (copy) copy.textContent = alvo
+            ? `Selecione exercícios ou gere uma composição equilibrada para ${targets.length > 1 ? 'os focos escolhidos' : alvo.toLowerCase()}.`
+            : 'Selecione um ou mais focos para receber uma composição equilibrada.';
     };
 
     const filteredCatalog = () => {
-        const target = $('[data-builder-target]')?.value || '';
+        const targets = selectedTargets();
         const search = ($('[data-exercise-search]')?.value || '').trim().toLocaleLowerCase('pt-BR');
         const key = state.modo === 'musculo' ? 'musculo' : 'regiao';
         return state.catalogo.filter((item) => {
-            const matchesTarget = !target || item[key] === target;
+            const matchesTarget = targets.includes(item[key]);
             const haystack = `${item.nome} ${item.musculo} ${item.equipamento}`.toLocaleLowerCase('pt-BR');
             return matchesTarget && (!search || haystack.includes(search));
         });
@@ -87,7 +97,7 @@
                 </div>
                 <details><summary>Como fazer e erros comuns</summary><div class="exercise-guide"><h4>Mini tutorial</h4><p>${escapeHtml(item.tutorial)}</p><h4>Evite</h4><ul>${errors}</ul><a class="exercise-video" href="${escapeHtml(item.video)}" target="_blank" rel="noopener"><i class="fa-brands fa-youtube"></i> Ver demonstração</a></div></details>
             </article>`;
-        }).join('') : '<div class="empty-state"><strong>Nenhum exercício encontrado</strong><p>Ajuste o foco ou a busca.</p></div>';
+        }).join('') : `<div class="empty-state"><strong>${selectedTargets().length ? 'Nenhum exercício encontrado' : 'Escolha um foco'}</strong><p>${selectedTargets().length ? 'Ajuste os focos ou a busca.' : 'Selecione um ou mais músculos para montar seu treino.'}</p></div>`;
         updateSelectedCount();
     };
 
@@ -100,7 +110,6 @@
 
     const balancedSelection = (items, limit) => {
         const sorted = [...items].sort((a, b) => Number(b.composto) - Number(a.composto) || a.nome.localeCompare(b.nome, 'pt-BR'));
-        if (state.modo === 'musculo') return sorted.slice(0, limit);
         const groups = new Map();
         sorted.forEach((item) => {
             if (!groups.has(item.musculo)) groups.set(item.musculo, []);
@@ -114,20 +123,20 @@
     };
 
     const generateWorkout = () => {
-        const target = $('[data-builder-target]')?.value || '';
-        if (!target) return;
+        const targets = selectedTargets();
+        if (!targets.length) { toast('Selecione ao menos um foco para gerar o treino.', true); return; }
         const duration = Number($('[data-builder-duration]')?.value || 45);
         const objective = $('[data-builder-objective]')?.value || 'hipertrofia';
         const limits = objective === 'forca' ? { 30: 3, 45: 5, 60: 6 } : objective === 'condicionamento' ? { 30: 5, 45: 7, 60: 9 } : { 30: 4, 45: 6, 60: 8 };
         const limit = limits[duration] || 6;
         const key = state.modo === 'musculo' ? 'musculo' : 'regiao';
-        const candidates = state.catalogo.filter((item) => item[key] === target);
+        const candidates = state.catalogo.filter((item) => targets.includes(item[key]));
         const chosen = balancedSelection(candidates, Math.min(limit, candidates.length));
         state.selecionados = new Set(chosen.map((item) => Number(item.id)));
         const name = $('[data-workout-name]');
-        if (name && !name.value.trim()) name.value = `${target} ${duration} min`;
+        if (name && !name.value.trim()) name.value = `${targetLabel(targets)} ${duration} min`;
         renderCatalog();
-        toast(`${chosen.length} exercícios selecionados para ${target}.`);
+        toast(`${chosen.length} exercícios distribuídos entre ${targetLabel(targets)}.`);
     };
 
     const renderSaved = () => {
@@ -180,7 +189,7 @@
                 method: 'POST', credentials: 'same-origin', headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': csrf },
                 body: JSON.stringify({
                     nome: name, objetivo: $('[data-builder-objective]').value, duracao: Number($('[data-builder-duration]').value),
-                    criterio_tipo: state.modo, criterio_valor: $('[data-builder-target]').value, exercicios: [...state.selecionados]
+                    criterio_tipo: state.modo, criterio_valor: selectedTargets().join(', '), exercicios: [...state.selecionados]
                 })
             });
             const data = await response.json();
@@ -248,10 +257,10 @@
     $$('[data-builder-mode]').forEach((button) => button.addEventListener('click', () => {
         state.modo = button.dataset.builderMode;
         $$('[data-builder-mode]').forEach((item) => item.classList.toggle('active', item === button));
+        state.alvos.clear();
         state.selecionados.clear();
         renderTargets();
     }));
-    $('[data-builder-target]')?.addEventListener('change', () => { state.selecionados.clear(); updateBuilderHeading(); renderCatalog(); });
     $('[data-builder-duration]')?.addEventListener('change', updateBuilderHeading);
     $('[data-builder-objective]')?.addEventListener('change', renderCatalog);
     $('[data-exercise-search]')?.addEventListener('input', renderCatalog);
@@ -267,6 +276,12 @@
             const id = Number(toggle.dataset.toggleExercise);
             state.selecionados.has(id) ? state.selecionados.delete(id) : state.selecionados.add(id);
             renderCatalog();
+        }
+        const target = event.target.closest('[data-builder-target]');
+        if (target) {
+            const value = target.dataset.builderTarget;
+            state.alvos.has(value) ? state.alvos.delete(value) : state.alvos.add(value);
+            renderTargets();
         }
         const start = event.target.closest('[data-start-custom]');
         if (start) openRunner(start.dataset.startCustom);

@@ -22,6 +22,34 @@
     border-radius: 8px;
 }
 
+.builder-target-field {
+    grid-column: span 2;
+}
+
+.builder-targets {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 7px;
+}
+
+.builder-target {
+    min-height: 38px;
+    padding: 7px 10px;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    background: #09243a;
+    color: #b8ccdc;
+    font-size: 12px;
+    font-weight: 800;
+    cursor: pointer;
+}
+
+.builder-target.active {
+    border-color: #27bde9;
+    background: #117fa9;
+    color: #fff;
+}
+
 @media (max-width: 760px) {
     .exercise-main {
         grid-template-columns: auto 60px minmax(0, 1fr) auto;
@@ -32,5 +60,13 @@
     .exercise-thumb {
         width: 60px;
         height: 48px;
+    }
+
+    .builder-target-field {
+        grid-column: 1 / -1;
+    }
+
+    .builder-target {
+        flex: 1 1 auto;
     }
 }

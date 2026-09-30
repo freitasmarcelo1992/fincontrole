@@ -52,7 +52,7 @@ function treinos_catalogo_schema(mysqli $conexao): bool
             objetivo VARCHAR(30) NOT NULL,
             duracao_minutos SMALLINT NOT NULL,
             criterio_tipo VARCHAR(20) NOT NULL,
-            criterio_valor VARCHAR(80) NOT NULL,
+            criterio_valor VARCHAR(180) NOT NULL,
             criado_em TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
             atualizado_em TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
             INDEX idx_treinos_personalizados_usuario (id_usuario, atualizado_em)
@@ -72,6 +72,13 @@ function treinos_catalogo_schema(mysqli $conexao): bool
         if (!$conexao->query($sql)) {
             return false;
         }
+    }
+
+    $coluna = $conexao->query("SHOW COLUMNS FROM treinos_personalizados LIKE 'criterio_valor'");
+    $tipo = $coluna ? (string) ($coluna->fetch_assoc()['Type'] ?? '') : '';
+    if (!preg_match('/varchar\\((?:1[89][0-9]|[2-9][0-9]{2,})\\)/i', $tipo)
+        && !$conexao->query('ALTER TABLE treinos_personalizados MODIFY criterio_valor VARCHAR(180) NOT NULL')) {
+        return false;
     }
     return true;
 }

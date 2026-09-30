@@ -1,4 +1,4 @@
-const CACHE_NAME = "fincontrole-pwa-v51-imagens-exercicios-20260929";
+const CACHE_NAME = "fincontrole-pwa-v52-multiplos-focos-20260930";
 const APP_SHELL = [
   "/paginas/manifest.json",
   "/paginas/assets/img/icon-192.png",
