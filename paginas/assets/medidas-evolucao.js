@@ -5,6 +5,8 @@
     const canvas = section.querySelector('[data-evolution-chart]');
     const status = section.querySelector('[data-evolution-status]');
     const summary = section.querySelector('[data-evolution-summary]');
+    const movingAverage = section.querySelector('[data-evolution-moving-average]');
+    const movingAverageValue = section.querySelector('[data-evolution-moving-average-value]');
     const period = section.querySelector('[data-evolution-period]');
     const retry = section.querySelector('[data-evolution-retry]');
     const tabs = [...section.querySelectorAll('[data-evolution-metric]')];
@@ -16,6 +18,7 @@
     const number = value => value !== null && value !== '' && Number.isFinite(Number(value)) && Number(value) > 0 ? Number(value) : null;
     const format = value => value.toLocaleString('pt-BR', {maximumFractionDigits: 2});
     const dateLabel = (value, full = false) => new Date(value).toLocaleDateString('pt-BR', {timeZone: 'UTC', day: '2-digit', month: '2-digit', ...(full ? {year: 'numeric'} : {})});
+    const day = 86400000;
     let metric = 'peso';
     let records = [];
     let chart;
@@ -25,6 +28,8 @@
         if (chart) { chart.destroy(); chart = null; }
         canvas.hidden = true;
         summary.textContent = '';
+        movingAverage.hidden = true;
+        movingAverageValue.textContent = '';
         status.textContent = text;
         status.hidden = false;
     };
@@ -45,6 +50,14 @@
         const first = points[0];
         const last = points[points.length - 1];
         const delta = last.y - first.y;
+        const averages = points.map((point, index) => {
+            const start = point.x - (4 * day);
+            const window = points.slice(0, index + 1).filter(candidate => candidate.x >= start);
+            return {x: point.x, y: window.reduce((total, candidate) => total + candidate.y, 0) / window.length};
+        });
+        const currentAverage = averages[averages.length - 1].y;
+        movingAverageValue.textContent = `${format(currentAverage)} ${config.unit}`;
+        movingAverage.hidden = false;
         summary.textContent = `${format(last.y)} ${config.unit} em ${dateLabel(last.x)} · ` + (points.length === 1 ? 'Primeiro registro' : `${delta > 0 ? '+' : ''}${format(delta)} ${config.unit} no período`);
         status.hidden = true;
         canvas.hidden = false;
@@ -52,14 +65,17 @@
         if (chart) chart.destroy();
         chart = new Chart(canvas, {
             type: 'line',
-            data: {datasets: [{label: config.label, data: points, borderColor: config.color, backgroundColor: config.color, borderWidth: 2, pointRadius: points.length > 60 ? 1 : 3, pointHitRadius: 14, pointHoverRadius: 5, tension: 0, fill: false}]},
+            data: {datasets: [
+                {label: config.label, data: points, borderColor: config.color, backgroundColor: config.color, borderWidth: 2, pointRadius: points.length > 60 ? 1 : 3, pointHitRadius: 14, pointHoverRadius: 5, tension: 0, fill: false},
+                {label: 'Média móvel 5 dias', data: averages, borderColor: '#34d399', backgroundColor: '#34d399', borderWidth: 2, borderDash: [6, 4], pointRadius: 0, pointHitRadius: 10, tension: .2, fill: false}
+            ]},
             options: {
                 responsive: true, maintainAspectRatio: false, animation: false, parsing: false,
                 interaction: {mode: 'nearest', axis: 'x', intersect: false},
                 plugins: {
                     legend: {display: false},
-                    tooltip: {backgroundColor: '#153650', titleColor: '#fff', bodyColor: '#fff', displayColors: false,
-                        callbacks: {title: items => dateLabel(items[0].parsed.x, true), label: item => `${format(item.parsed.y)} ${config.unit}`}}
+                    tooltip: {backgroundColor: '#153650', titleColor: '#fff', bodyColor: '#fff', displayColors: true,
+                        callbacks: {title: items => dateLabel(items[0].parsed.x, true), label: item => `${item.dataset.label}: ${format(item.parsed.y)} ${config.unit}`}}
                 },
                 scales: {
                     x: {type: 'linear', min: first.x - (points.length === 1 ? 86400000 : 0), max: last.x + (points.length === 1 ? 86400000 : 0),

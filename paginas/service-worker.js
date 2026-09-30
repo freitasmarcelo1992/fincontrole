@@ -1,4 +1,4 @@
-const CACHE_NAME = "fincontrole-pwa-v46-landpage-pro-hero-20260917";
+const CACHE_NAME = "fincontrole-pwa-v47-medidas-media-movel-20260929";
 const APP_SHELL = [
   "/paginas/manifest.json",
   "/paginas/assets/img/icon-192.png",

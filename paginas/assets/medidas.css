@@ -67,6 +67,9 @@
 .evolution-tabs [aria-selected="true"] { background: #087f9e; border-color: #12aeea; color: #fff; }
 .medidas-evolution :focus-visible { outline: 2px solid #12aeea; outline-offset: 2px; }
 #evolution-panel { display: flex; flex-direction: column; flex: 1; min-height: 0; }
+.evolution-moving-average { display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 34px; margin: 0 0 4px; padding: 6px 10px; border: 1px solid var(--line); border-left: 3px solid #34d399; border-radius: 6px; background: rgba(52,211,153,.08); font-size: 12px; color: var(--muted); }
+.evolution-moving-average[hidden] { display: none; }
+.evolution-moving-average strong { color: #a7f3d0; font-size: 14px; white-space: nowrap; }
 .evolution-summary { min-height: 18px; margin: 0 0 4px; font-size: 12px; color: var(--muted); line-height: 1.4; }
 .evolution-chart { position: relative; flex: 1; min-height: 150px; display: flex; flex-direction: column; align-items: center; justify-content: center; }
 .evolution-chart canvas { position: absolute; inset: 0; width: 100% !important; height: 100% !important; }

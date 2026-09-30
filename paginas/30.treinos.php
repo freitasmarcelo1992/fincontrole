@@ -321,7 +321,7 @@ function treino_imagem_data_uri(array $exercicio): string
         .workout-panel > p { margin: 0 0 12px; color: var(--muted); font-weight: 700; }
         .workout-day-panel[hidden] { display: none; }
     </style>
-    <link rel="stylesheet" href="assets/medidas.css?v=3">
+    <link rel="stylesheet" href="assets/medidas.css?v=4">
     <link rel="stylesheet" href="assets/header-perfil.css?v=1">
 </head>
 <body class="treinos-app">
@@ -370,6 +370,10 @@ function treino_imagem_data_uri(array $exercicio): string
                 <button type="button" role="tab" id="evolution-biceps" aria-controls="evolution-panel" aria-selected="false" tabindex="-1" data-evolution-metric="biceps">Bíceps (média)</button>
             </div>
             <div id="evolution-panel" role="tabpanel" aria-labelledby="evolution-peso">
+                <p class="evolution-moving-average" data-evolution-moving-average hidden>
+                    <span>Média móvel 5 dias</span>
+                    <strong data-evolution-moving-average-value></strong>
+                </p>
                 <p class="evolution-summary" data-evolution-summary aria-live="polite"></p>
                 <div class="evolution-chart">
                     <canvas data-evolution-chart role="img" aria-label="Evolução do peso por data" hidden></canvas>
@@ -732,7 +736,7 @@ function treino_imagem_data_uri(array $exercicio): string
     </script>
     <?php require __DIR__ . '/32.medidas_popup.php'; ?>
     <script src="assets/chart.umd.min.js" defer></script>
-    <script src="assets/medidas-evolucao.js?v=1" defer></script>
+    <script src="assets/medidas-evolucao.js?v=2" defer></script>
     <script src="assets/medidas.js?v=3" defer></script>
 </body>
 </html>
